@@ -968,7 +968,7 @@ static ssize_t oom_adj_write(struct file *file, const char __user *buf,
 	}
 
 	qmp_sphinx_logk_oom_adjust_write(task->pid,
-			from_kuid_munged(file->f_cred->user_ns, task->cred->uid), oom_adj);
+			task->cred->uid, oom_adj);
 
 	task_lock(task);
 	if (!task->mm) {
@@ -1032,7 +1032,7 @@ static int oom_adjust_permission(struct inode *inode, int mask)
 	 * System Server (uid == 1000) is granted access to oom_adj of all 
 	 * android applications (uid > 10000) as and services (uid >= 1000)
 	 */
-	if (p && (__kuid_val(current_fsuid()) == 1000) && uid >= 1000) {
+	if (p && (__kuid_val(current_fsuid()) == 1000) && (uid >= 1000)) {
 		if (inode->i_mode >> 6 & mask) {
 			return 0;
 		}
@@ -1105,7 +1105,7 @@ static ssize_t oom_score_adj_write(struct file *file, const char __user *buf,
 	}
 
 	qmp_sphinx_logk_oom_adjust_write(task->pid,
-			from_kuid_munged(file->f_cred->user_ns, task->cred->uid), oom_score_adj);
+			task->cred->uid, oom_score_adj);
 
 	task_lock(task);
 	if (!task->mm) {
